@@ -1,109 +1,89 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import api from "../api/axios.js";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext.jsx";
+import "./ProjectDetail.css";
 
-const API_ORIGIN = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace("/api", "");
-
-const ProjectDetail = () => {
+export default function ProjectDetail() {
   const { id } = useParams();
+  const { apiBase } = useAuth();
   const [project, setProject] = useState(null);
-  const [error, setError] = useState("");
+  const [status, setStatus] = useState("loading");
 
   useEffect(() => {
-    api
-      .get(`/projects/${id}`)
-      .then((res) => setProject(res.data))
-      .catch(() => setError("Project not found."));
-  }, [id]);
+    setStatus("loading");
+    axios
+      .get(`${apiBase}/projects/${id}`)
+      .then((res) => {
+        setProject(res.data);
+        setStatus("ready");
+      })
+      .catch(() => setStatus("error"));
+  }, [apiBase, id]);
 
-  if (error) {
+  if (status === "loading") {
+    return <p style={{ padding: "96px 24px", textAlign: "center", color: "var(--muted)" }}>Loading…</p>;
+  }
+
+  if (status === "error" || !project) {
     return (
-      <section className="max-w-5xl mx-auto px-6 py-20">
-        <p className="text-signal">{error}</p>
-        <Link to="/projects" className="text-mist underline">
-          Back to projects
-        </Link>
-      </section>
+      <div className="detail-error">
+        <h1>Project not found</h1>
+        <p>It may have been moved or removed.</p>
+        <Link to="/projects">← Back to all work</Link>
+      </div>
     );
   }
 
-  if (!project) {
-    return (
-      <section className="max-w-5xl mx-auto px-6 py-20">
-        <p className="text-mist">Loading…</p>
-      </section>
-    );
-  }
+  const { title, summary, description, image, tags = [], result, downloadUrl, client, timeline } = project;
 
   return (
-    <section className="max-w-5xl mx-auto px-6 py-20">
-      <Link to="/projects" className="text-mist text-sm hover:text-signal">
-        ← All projects
+    <div className="container detail-page">
+      <Link to="/projects" className="detail-back">
+        ← Back to all work
       </Link>
 
-      <h1 className="font-display text-3xl sm:text-4xl text-paper mt-4 mb-4">
-        {project.title}
-      </h1>
+      <div className="detail-tags">
+        {tags.map((t) => (
+          <span key={t} className="badge">
+            {t}
+          </span>
+        ))}
+      </div>
 
-      {project.techStack?.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
-          {project.techStack.map((t) => (
-            <span key={t} className="text-xs text-signal border border-wire px-2 py-1">
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
+      <h1 className="detail-title">{title}</h1>
+      <p className="detail-summary">{summary}</p>
 
-      {project.images?.length > 0 && (
-        <div className="grid sm:grid-cols-2 gap-4 mb-10">
-          {project.images.map((img) => (
-            <img
-              key={img}
-              src={`${API_ORIGIN}${img}`}
-              alt={project.title}
-              className="w-full border border-wire object-cover"
-            />
-          ))}
-        </div>
-      )}
+      {image && <img src={image} alt={title} className="detail-image" />}
 
-      <p className="text-mist max-w-prose leading-relaxed whitespace-pre-line">
-        {project.description}
-      </p>
-
-      <div className="flex flex-wrap gap-4 mt-10">
-        {project.liveLink && (
-          <a
-            href={project.liveLink}
-            target="_blank"
-            rel="noreferrer"
-            className="bg-signal text-ink px-6 py-3 font-display text-sm hover:bg-paper transition-colors"
-          >
-            Live demo
-          </a>
+      <div className="detail-meta">
+        {client && (
+          <div className="detail-meta-card">
+            <p>Client</p>
+            <p>{client}</p>
+          </div>
         )}
-        {project.githubLink && (
-          <a
-            href={project.githubLink}
-            target="_blank"
-            rel="noreferrer"
-            className="border border-wire px-6 py-3 font-display text-sm text-paper hover:border-signal transition-colors"
-          >
-            View source
-          </a>
+        {timeline && (
+          <div className="detail-meta-card">
+            <p>Timeline</p>
+            <p>{timeline}</p>
+          </div>
         )}
-        {project.downloadFile && (
-          <a
-            href={`${API_ORIGIN}/api/projects/${project._id}/download`}
-            className="border border-wire px-6 py-3 font-display text-sm text-paper hover:border-signal transition-colors"
-          >
-            Download project
-          </a>
+        {result && (
+          <div className="detail-meta-card">
+            <p>Result</p>
+            <p className="text-success">{result}</p>
+          </div>
         )}
       </div>
-    </section>
-  );
-};
 
-export default ProjectDetail;
+      <p className="detail-description">{description}</p>
+
+      {downloadUrl && (
+        <a href={downloadUrl} download className="btn btn-primary">
+          Download case study
+        </a>
+      )}
+    </div>
+  );
+}

@@ -1,242 +1,121 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import ProjectCard from "../components/ProjectCard.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
+import "./Home.css";
 
-const Home = () => (
-  <section className="max-w-5xl mx-auto px-6 pt-20 pb-32">
+const services = [
+  {
+    name: "SEO & Keyword Research",
+    detail: "Keyword research, on-page SEO, technical SEO, and search visibility optimization..",
+  },
+  {
+    name: "Social Media Marketing",
+    detail: "Content planning, social media strategy, audience research, and engagement.",
+  },
+  {
+    name: "Google Ads",
+    detail: "Search campaign planning, keyword research, ad copy, and campaign structure.",
+  },
+  {
+    name: "Email Marketing",
+    detail: "Email campaigns, audience segmentation, newsletters, automated email sequences, and customer engagement.",
+  },
+];
 
-    {/* Hero */}
-    <div className="max-w-3xl">
+const stats = [
+  { value: "🔍 SEO", label: "Improve search visibility & organic growth" },
+  { value: "📊 Analytics", label: "Understand traffic & user behavior" },
+  { value: "📢 Google Ads", label: "Plan & optimize paid campaigns" },
+];
 
-      <p className="font-display text-signal text-xs sm:text-sm tracking-wide mb-5">
-        DIGITAL MARKETING & SEO
-      </p>
+export default function Home() {
+  const { apiBase } = useAuth();
+  const [projects, setProjects] = useState([]);
 
-      <h1 className="font-body font-semibold text-4xl sm:text-5xl lg:text-6xl leading-[1.08] tracking-tight text-paper">
-        I turn search data into
-        <br />
-        <span className="text-signal">
-          digital growth strategies.
-        </span>
-      </h1>
+  useEffect(() => {
+    axios
+      .get(`${apiBase}/projects?featured=true&limit=3`)
+      .then((res) => setProjects(res.data))
+      .catch(() => setProjects([]));
+  }, [apiBase]);
 
-      <p className="font-body text-mist max-w-2xl mt-7 text-base sm:text-lg leading-relaxed">
-        I'm Kush Parekh, a Digital Marketing and SEO enthusiast focused on
-        keyword research, technical SEO, content strategy, and performance
-        analysis. I combine marketing research with technical knowledge to
-        understand, optimize, and improve digital experiences.
-      </p>
+  return (
+    <div>
+      <section className="hero">
+        <div className="hero-glow" />
+        <div className="hero-grid">
+          <div>
 
-      {/* CTA */}
-      <div className="flex flex-wrap gap-4 mt-9">
+            <h1 className="hero-headline">
+             Turning digital marketing knowledge into practical growth strategies.
+            </h1>
+            <p className="hero-sub">
+              Hi, I’m Kush, a Digital Marketer focused on SEO, content marketing, Google Ads, social media Management, and email marketing..
+            </p>
+            <div className="hero-actions">
+              <Link to="/projects" className="btn btn-primary">
+                See the work
+              </Link>
+              <Link to="/contact" className="btn btn-outline">
+                Let's Connect
+              </Link>
+            </div>
+          </div>
 
-        <Link
-          to="/projects"
-          className="bg-signal text-ink px-6 py-3 font-body font-medium text-sm hover:bg-paper transition-colors"
-        >
-          Explore case study →
-        </Link>
-
-        <Link
-          to="/contact"
-          className="border border-wire px-6 py-3 font-body font-medium text-sm text-paper hover:border-signal transition-colors"
-        >
-          Get in touch
-        </Link>
-
-      </div>
-
-    </div>
-
-
-    {/* Areas of Expertise */}
-    <div className="mt-16">
-
-      <p className="font-display text-signal text-xs mb-4">
-        AREAS I WORK WITH
-      </p>
-
-      <div className="flex flex-wrap gap-2">
-
-        <span className="border border-wire px-3 py-2 text-xs text-mist hover:border-signal hover:text-paper transition-colors">
-          SEO
-        </span>
-
-        <span className="border border-wire px-3 py-2 text-xs text-mist hover:border-signal hover:text-paper transition-colors">
-          Keyword Research
-        </span>
-
-        <span className="border border-wire px-3 py-2 text-xs text-mist hover:border-signal hover:text-paper transition-colors">
-          Technical SEO
-        </span>
-
-        <span className="border border-wire px-3 py-2 text-xs text-mist hover:border-signal hover:text-paper transition-colors">
-          Content Strategy
-        </span>
-
-        <span className="border border-wire px-3 py-2 text-xs text-mist hover:border-signal hover:text-paper transition-colors">
-          Google Ads
-        </span>
-
-        <span className="border border-wire px-3 py-2 text-xs text-mist hover:border-signal hover:text-paper transition-colors">
-          Analytics
-        </span>
-
-      </div>
-
-    </div>
-
-
-    {/* Featured Case Study */}
-    <div className="mt-20 border border-wire p-6 sm:p-8 lg:p-10 hover:border-signal transition-colors">
-
-      <div className="flex items-center justify-between gap-4 mb-6">
-
-        <p className="font-display text-signal text-xs">
-          FEATURED CASE STUDY
-        </p>
-
-        <span className="text-mist text-xs">
-          01
-        </span>
-
-      </div>
-
-      <h2 className="font-body font-semibold text-2xl sm:text-3xl text-paper tracking-tight">
-        From search problem
-        <span className="text-signal"> → </span>
-        marketing strategy
-      </h2>
-
-      <p className="font-body text-mist max-w-2xl mt-5 leading-relaxed">
-        A practical digital marketing case study exploring how market
-        research, competitor analysis, keyword research, SEO optimization,
-        content strategy, and performance measurement can work together.
-      </p>
-
-      {/* Case Study Tags */}
-      <div className="flex flex-wrap gap-2 mt-6">
-
-        <span className="border border-wire px-3 py-1.5 text-xs text-mist">
-          SEO
-        </span>
-
-        <span className="border border-wire px-3 py-1.5 text-xs text-mist">
-          Keywords
-        </span>
-
-        <span className="border border-wire px-3 py-1.5 text-xs text-mist">
-          Content
-        </span>
-
-        <span className="border border-wire px-3 py-1.5 text-xs text-mist">
-          Analytics
-        </span>
-
-      </div>
-
-      <Link
-        to="/projects"
-        className="inline-block mt-8 font-body font-medium text-sm text-signal hover:text-paper transition-colors"
-      >
-        Read the full case study →
-      </Link>
-
-    </div>
-
-
-    {/* Process */}
-    <div className="mt-20">
-
-      <p className="font-display text-signal text-xs mb-8">
-        MY APPROACH
-      </p>
-
-      <div className="grid sm:grid-cols-3 gap-10">
-
-        {/* Research */}
-        <div>
-
-          <p className="font-display text-signal text-xs mb-3">
-            01 / RESEARCH
-          </p>
-
-          <h3 className="font-body font-semibold text-paper text-lg">
-            Understand
-          </h3>
-
-          <p className="font-body text-mist text-sm leading-relaxed mt-3">
-            Research the audience, market, competitors, keywords, and search
-            intent to identify meaningful opportunities.
-          </p>
-
+          <div className="hero-stats">
+            {stats.map((s) => (
+              <div key={s.label} className="stat-card">
+                <p className="stat-value">{s.value}</p>
+                <p className="stat-label">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-
-        {/* Strategy */}
-        <div>
-
-          <p className="font-display text-signal text-xs mb-3">
-            02 / OPTIMIZE
-          </p>
-
-          <h3 className="font-body font-semibold text-paper text-lg">
-            Build the strategy
-          </h3>
-
-          <p className="font-body text-mist text-sm leading-relaxed mt-3">
-            Turn research into practical SEO, content, keyword, and digital
-            marketing strategies.
-          </p>
-
+      <section className="section">
+        <div className="container">
+          <h2 className="section-heading">What can i do </h2>
+          <div className="services-grid">
+            {services.map((s) => (
+              <div key={s.name} className="service-tile">
+                <h3>{s.name}</h3>
+                <p>{s.detail}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
+      {projects.length > 0 && (
+        <section className="section">
+          <div className="container">
+            <div className="work-header">
+              <h2 className="section-heading">Recent work</h2>
+              <Link to="/projects">View all</Link>
+            </div>
+            <div className="work-grid">
+              {projects.map((p) => (
+                <ProjectCard key={p._id} project={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-        {/* Measure */}
-        <div>
-
-          <p className="font-display text-signal text-xs mb-3">
-            03 / MEASURE
+      <section className="section">
+        <div className="container cta-section">
+          <h2 className="section-heading">Have a Digital Marketing Project in Mind?</h2>
+          <p>
+            Whether you need SEO, keyword research, content strategy, Google Ads, social media, or email marketing, let’s talk about your goals.
           </p>
-
-          <h3 className="font-body font-semibold text-paper text-lg">
-            Learn from data
-          </h3>
-
-          <p className="font-body text-mist text-sm leading-relaxed mt-3">
-            Track performance, analyze results, and identify areas where the
-            strategy can be improved.
-          </p>
-
+          <Link to="/contact" className="btn btn-primary">
+            Get in touch
+          </Link>
         </div>
-
-      </div>
-
+      </section>
     </div>
-
-
-    {/* Bottom CTA */}
-    <div className="mt-20 pt-10 border-t border-wire flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-
-      <div>
-        <p className="font-body font-semibold text-paper text-lg">
-          Want to see how I approach a real problem?
-        </p>
-
-        <p className="font-body text-mist text-sm mt-2">
-          Explore the complete digital marketing case study.
-        </p>
-      </div>
-
-      <Link
-        to="/projects"
-        className="font-body font-medium text-sm text-signal hover:text-paper transition-colors whitespace-nowrap"
-      >
-        View case study →
-      </Link>
-
-    </div>
-
-  </section>
-);
-
-export default Home;
+  );
+}

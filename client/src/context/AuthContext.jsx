@@ -1,28 +1,61 @@
-import React, { createContext, useContext, useState } from "react";
-import api from "../api/axios.js";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("kp_admin_token"));
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+export function AuthProvider({ children }) {
+  const [token, setToken] = useState(() => localStorage.getItem("kp_token"));
+  const [admin, setAdmin] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    if (!token) {
+      setCheckingAuth(false);
+      return;
+    }
+    axios
+      .get(`${API_BASE}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setAdmin(res.data))
+      .catch(() => {
+        localStorage.removeItem("kp_token");
+        setToken(null);
+      })
+      .finally(() => setCheckingAuth(false));
+  }, [token]);
 
   const login = async (email, password) => {
-    const { data } = await api.post("/auth/login", { email, password });
-    localStorage.setItem("kp_admin_token", data.token);
-    setToken(data.token);
-    return data;
+    const res = await axios.post(`${API_BASE}/auth/login`, { email, password });
+    localStorage.setItem("kp_token", res.data.token);
+    setToken(res.data.token);
+    setAdmin(res.data.admin);
+    return res.data;
   };
 
   const logout = () => {
-    localStorage.removeItem("kp_admin_token");
+    localStorage.removeItem("kp_token");
     setToken(null);
+    setAdmin(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ token, isAuthenticated: !!token, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  const value = {
+    token,
+    admin,
+    isAuthenticated: Boolean(token),
+    checkingAuth,
+    login,
+    logout,
+    apiBase: API_BASE,
+  };
 
-export const useAuth = () => useContext(AuthContext);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside an AuthProvider");
+  return ctx;
+}

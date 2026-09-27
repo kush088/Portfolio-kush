@@ -1,38 +1,64 @@
-import React, { useEffect, useState } from "react";
-import api from "../api/axios.js";
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import ProjectCard from "../components/ProjectCard.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
+import "./Projects.css";
 
-const Projects = () => {
+export default function Projects() {
+  const { apiBase } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    api
-      .get("/projects")
+    axios
+      .get(`${apiBase}/projects`)
       .then((res) => setProjects(res.data))
-      .catch(() => setError("Could not load projects right now."))
+      .catch(() => setProjects([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [apiBase]);
+
+  const categories = useMemo(() => {
+    const set = new Set(projects.flatMap((p) => p.tags || []));
+    return ["All", ...Array.from(set)];
+  }, [projects]);
+
+  const filtered =
+    category === "All" ? projects : projects.filter((p) => p.tags?.includes(category));
 
   return (
-    <section className="max-w-5xl mx-auto px-6 py-20">
-      <h1 className="font-display text-3xl text-paper mb-2">Projects</h1>
-      <p className="text-mist mb-12">Things I've designed, built and shipped.</p>
+    <div className="container projects-page">
+      <p className="eyebrow">Work</p>
+      <h1 className="projects-title">
+        Research. Strategy. Digital Growth.
+      </h1>
 
-      {loading && <p className="text-mist">Loading projects…</p>}
-      {error && <p className="text-signal">{error}</p>}
-      {!loading && !error && projects.length === 0 && (
-        <p className="text-mist">No projects yet — check back soon.</p>
-      )}
-
-      <div className="grid sm:grid-cols-2 gap-6">
-        {projects.map((p) => (
-          <ProjectCard key={p._id} project={p} />
+      <div className="filter-row">
+        {categories.map((c) => (
+          <button
+            key={c}
+            onClick={() => setCategory(c)}
+            className={`filter-pill${category === c ? " active" : ""}`}
+          >
+            {c}
+          </button>
         ))}
       </div>
-    </section>
-  );
-};
 
-export default Projects;
+      {loading ? (
+        <p style={{ marginTop: 64, color: "var(--muted)" }}>Loading projects…</p>
+      ) : filtered.length === 0 ? (
+        <div className="projects-empty">
+          <p>Comming Soon.</p>
+          <p>Check back soon, or try a different category.</p>
+        </div>
+      ) : (
+        <div className="projects-grid">
+          {filtered.map((p) => (
+            <ProjectCard key={p._id} project={p} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

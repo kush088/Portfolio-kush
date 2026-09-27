@@ -12,17 +12,19 @@ import Contact from "./pages/Contact.jsx";
 import AdminLogin from "./pages/AdminLogin.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div style={{ display: "flex", minHeight: "100vh", flexDirection: "column" }}>
       <Navbar />
-      <main className="flex-1">
+
+      <main style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/contact" element={<Contact />} />
+
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin/dashboard"
@@ -32,11 +34,20 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="*"
+            element={
+              <div style={{ padding: "96px 24px", textAlign: "center" }}>
+                <h1 style={{ fontSize: 30, fontWeight: 700 }}>Page not found</h1>
+                <p style={{ marginTop: 8, color: "var(--muted)" }}>That page doesn't exist.</p>
+              </div>
+            }
+          />
         </Routes>
       </main>
+
       <Footer />
     </div>
   );
 }
-
-export default App;

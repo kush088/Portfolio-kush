@@ -1,61 +1,65 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import "./Navbar.css";
 
 const links = [
   { to: "/", label: "Home" },
   { to: "/about", label: "About" },
-  { to: "/projects", label: "Projects" },
+  { to: "/projects", label: "Work" },
   { to: "/contact", label: "Contact" },
 ];
 
-const Navbar = () => {
+export default function Navbar() {
   const [open, setOpen] = useState(false);
 
-  const linkClass = ({ isActive }) =>
-    `text-sm tracking-wide transition-colors ${
-      isActive ? "text-signal" : "text-mist hover:text-paper"
-    }`;
+  const linkClass = ({ isActive }) => `navbar-link${isActive ? " active" : ""}`;
 
   return (
-    <header className="border-b border-wire">
-      <nav className="max-w-5xl mx-auto flex items-center justify-between px-6 py-5">
-        <NavLink to="/" className="font-display text-lg text-paper">
-          kush<span className="text-signal">parekh</span>
+    <header className="navbar">
+      <nav className="navbar-inner">
+        <NavLink to="/" className="navbar-logo">
+          Kush<span className="gradient-text">Parekh</span>
         </NavLink>
 
-        <ul className="hidden md:flex items-center gap-8">
+        <div className="navbar-links">
           {links.map((l) => (
-            <li key={l.to}>
-              <NavLink to={l.to} className={linkClass}>
-                {l.label}
-              </NavLink>
-            </li>
+            <NavLink key={l.to} to={l.to} className={linkClass} end={l.to === "/"}>
+              {l.label}
+            </NavLink>
           ))}
-        </ul>
+          
+        </div>
 
         <button
-          className="md:hidden text-paper"
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Toggle menu"
+          className="navbar-toggle"
+          aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
         >
-          {open ? "Close" : "Menu"}
+          <span className={open ? "open-top" : ""} />
+          <span className={open ? "open-mid" : ""} />
+          <span className={open ? "open-bottom" : ""} />
         </button>
       </nav>
 
       {open && (
-        <ul className="md:hidden flex flex-col gap-4 px-6 pb-6">
+        <div className="navbar-mobile">
           {links.map((l) => (
-            <li key={l.to}>
-              <NavLink to={l.to} className={linkClass} onClick={() => setOpen(false)}>
-                {l.label}
-              </NavLink>
-            </li>
+            <NavLink
+              key={l.to}
+              to={l.to}
+              className={linkClass}
+              onClick={() => setOpen(false)}
+              end={l.to === "/"}
+            >
+              {l.label}
+            </NavLink>
           ))}
-        </ul>
+          <NavLink to="/contact" onClick={() => setOpen(false)} className="navbar-cta">
+            Let's talk
+          </NavLink>
+        </div>
       )}
     </header>
   );
-};
-
-export default Navbar;
+}
