@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: "Inter", sans-serif;
   color: #f3f1ec;
@@ -52,7 +56,6 @@ img {
   color: #121319;
 }
 
-/* Keyboard focus */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -62,7 +65,6 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

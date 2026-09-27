@@ -2,9 +2,8 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
-
   theme: {
     extend: {
       colors: {
@@ -14,17 +13,14 @@ export default {
         wire: "#2A2C36",
         mist: "#9497A6",
       },
-
       fontFamily: {
         display: ["Inter", "sans-serif"],
         body: ["Inter", "sans-serif"],
       },
-
       maxWidth: {
         prose: "68ch",
       },
     },
   },
-
   plugins: [],
 };
