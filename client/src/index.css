@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,7 +13,7 @@ body {
 }
 
 ::selection {
-  background-color: #F2B807;
+  background-color: #f2b807;
   color: #121319;
 }
 
@@ -21,7 +22,7 @@ a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #F2B807;
+  outline: 2px solid #f2b807;
   outline-offset: 2px;
 }
 
